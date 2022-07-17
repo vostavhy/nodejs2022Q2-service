@@ -12,17 +12,15 @@ export class ArtistService {
     return this.artists;
   }
 
-  findOne(id: string) {
+  findOne(id: string): Artist {
     const found = this.artists.find((artist) => artist.id === id);
-
     if (!found) {
       throw new NotFoundException();
     }
-
     return found;
   }
 
-  create(createArtistDto: CreateArtistDto) {
+  create(createArtistDto: CreateArtistDto): Artist {
     const { name, grammy } = createArtistDto;
     const artist: Artist = {
       id: uuid(),
@@ -31,15 +29,26 @@ export class ArtistService {
     };
 
     this.artists.push(artist);
-
     return artist;
   }
 
-  update(id: string, updateArtistDto: UpdateArtistDto) {
-    return `This action updates a #${id} artist`;
+  update(id: string, updateArtistDto: UpdateArtistDto): Artist {
+    const found = this.findOne(id);
+    const { name, grammy } = updateArtistDto;
+    if (name) {
+      found.name = name;
+    }
+
+    if (grammy) {
+      found.grammy = grammy;
+    }
+
+    return found;
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} artist`;
+  remove(id: string): Artist {
+    const found = this.findOne(id);
+    this.artists = this.artists.filter((artist) => artist.id !== id);
+    return found;
   }
 }
