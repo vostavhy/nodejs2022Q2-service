@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-user.dto';
 import { User, UserWithoutPassword } from './entities/user.entity';
@@ -17,6 +21,11 @@ export class UserService {
 
   findOne(id: string): User {
     const found = this.users.find((user) => user.id === id);
+
+    if (!found) {
+      throw new NotFoundException();
+    }
+
     return found;
   }
 
@@ -48,6 +57,11 @@ export class UserService {
   ): UserWithoutPassword {
     const { oldPassword, newPassword } = updatePasswordDto;
     const user = this.findOne(id);
+
+    if (oldPassword !== user.password) {
+      throw new ForbiddenException();
+    }
+
     user.password = newPassword;
     user.version += 1;
     user.updatedAt = Date.now();
