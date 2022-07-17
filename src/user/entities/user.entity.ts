@@ -1,4 +1,6 @@
-export interface User {
+import { OmitType } from '@nestjs/mapped-types';
+
+export class User {
   id: string; // uuid v4
   login: string;
   password: string;
@@ -6,3 +8,5 @@ export interface User {
   createdAt: number; // timestamp of creation
   updatedAt: number; // timestamp of last update
 }
+
+export class UserWithoutPassword extends OmitType(User, ['password']) {}
