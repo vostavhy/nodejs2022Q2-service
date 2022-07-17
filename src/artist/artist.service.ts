@@ -1,12 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './entities/artist.entity';
 import { v4 as uuid } from 'uuid';
+import { dbService } from 'src/db/db.service';
 
 @Injectable()
 export class ArtistService {
-  artists: Artist[] = [];
+  artists: Artist[] = dbService.artists;
 
   findAll() {
     return this.artists;
@@ -16,6 +21,14 @@ export class ArtistService {
     const found = this.artists.find((artist) => artist.id === id);
     if (!found) {
       throw new NotFoundException();
+    }
+    return found;
+  }
+
+  findOne422(id: string): Artist {
+    const found = this.artists.find((artist) => artist.id === id);
+    if (!found) {
+      throw new UnprocessableEntityException();
     }
     return found;
   }

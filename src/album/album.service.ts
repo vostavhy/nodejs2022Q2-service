@@ -1,12 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { Album } from './entities/album.entity';
 import { v4 as uuid } from 'uuid';
+import { dbService } from 'src/db/db.service';
 
 @Injectable()
 export class AlbumService {
-  private albums: Album[] = [];
+  private albums: Album[] = dbService.albums;
 
   findAll() {
     return this.albums;
@@ -14,9 +19,17 @@ export class AlbumService {
 
   findOne(id: string): Album {
     const found = this.albums.find((album) => album.id === id);
-
     if (!found) {
       throw new NotFoundException();
+    }
+
+    return found;
+  }
+
+  findOne422(id: string): Album {
+    const found = this.albums.find((album) => album.id === id);
+    if (!found) {
+      throw new UnprocessableEntityException();
     }
 
     return found;
