@@ -1,26 +1,49 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
+import { Track } from './entities/track.entity';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class TrackService {
-  create(createTrackDto: CreateTrackDto) {
-    return 'This action adds a new track';
+  private tracks: Track[] = [];
+
+  findAll(): Track[] {
+    return this.tracks;
   }
 
-  findAll() {
-    return `This action returns all track`;
+  findOne(id: string): Track {
+    const found = this.tracks.find((track) => track.id === id);
+
+    if (!found) {
+      throw new NotFoundException();
+    }
+
+    return found;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} track`;
+  create(createTrackDto: CreateTrackDto): Track {
+    const track: Track = {
+      id: uuid(),
+      ...createTrackDto,
+    };
+    this.tracks.push(track);
+
+    return track;
   }
 
-  update(id: number, updateTrackDto: UpdateTrackDto) {
-    return `This action updates a #${id} track`;
+  update(id: string, updateTrackDto: UpdateTrackDto): Track {
+    let found: Track = this.findOne(id);
+    found = {
+      id: found.id,
+      ...updateTrackDto,
+    };
+    return found;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} track`;
+  remove(id: string): Track {
+    const found: Track = this.findOne(id);
+    this.tracks = this.tracks.filter((track) => track.id !== id);
+    return found;
   }
 }
