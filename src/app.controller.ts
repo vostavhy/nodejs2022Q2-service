@@ -1,13 +1,16 @@
 import { Controller, Get } from '@nestjs/common';
-import { UserWithoutPassword } from './user/entities/user.entity';
+import { AppService } from './app.service';
 import { UserService } from './user/user.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly appService: AppService,
+    private readonly userService: UserService,
+  ) {}
 
   @Get()
-  findAll(): UserWithoutPassword[] {
-    return this.userService.findAll();
+  getHello(): string {
+    return this.appService.getHello();
   }
 }
