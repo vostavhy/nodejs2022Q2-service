@@ -35,13 +35,10 @@ export class ArtistService {
   update(id: string, updateArtistDto: UpdateArtistDto): Artist {
     const found = this.findOne(id);
     const { name, grammy } = updateArtistDto;
-    if (name) {
-      found.name = name;
-    }
 
-    if (grammy) {
-      found.grammy = grammy;
-    }
+    found.name = name;
+
+    found.grammy = grammy;
 
     return found;
   }
