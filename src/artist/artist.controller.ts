@@ -23,7 +23,7 @@ export class ArtistController {
 
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.artistService.findOne(+id);
+    return this.artistService.findOne(id);
   }
 
   @Post()
@@ -36,11 +36,11 @@ export class ArtistController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateArtistDto: UpdateArtistDto,
   ) {
-    return this.artistService.update(+id, updateArtistDto);
+    return this.artistService.update(id, updateArtistDto);
   }
 
-  @Delete(':id', ParseUUIDPipe)
-  remove(@Param('id') id: string) {
-    return this.artistService.remove(+id);
+  @Delete(':id')
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.artistService.remove(id);
   }
 }
