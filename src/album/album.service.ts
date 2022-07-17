@@ -46,8 +46,8 @@ export class AlbumService {
   }
 
   remove(id: string): Album {
-    const album = this.findOne(id);
+    const found = this.findOne(id);
     this.albums = this.albums.filter((album) => album.id !== id);
-    return album;
+    return found;
   }
 }
