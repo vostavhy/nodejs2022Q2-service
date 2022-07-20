@@ -26,9 +26,15 @@ export class FavoritesService {
 
   findAll(): FavoritesResponse {
     const favorites: FavoritesResponse = {
-      artists: this.artistService.findAll(),
-      albums: this.albumService.findAll(),
-      tracks: this.trackService.findAll(),
+      artists: this.artistService
+        .findAll()
+        .filter((artist) => this.db.favorites.artists.includes(artist.id)),
+      albums: this.albumService
+        .findAll()
+        .filter((album) => this.db.favorites.albums.includes(album.id)),
+      tracks: this.trackService
+        .findAll()
+        .filter((track) => this.db.favorites.tracks.includes(track.id)),
     };
     return favorites;
   }
@@ -44,12 +50,12 @@ export class FavoritesService {
   }
 
   removeTrack(id: string) {
-    let tracks = this.db.favorites.tracks;
+    const tracks = this.db.favorites.tracks;
     const found = tracks.find((tracksID) => tracksID === id);
     if (!found) {
       throw new NotFoundException();
     }
-    tracks = tracks.filter((tracksID) => tracksID !== id);
+    this.db.favorites.tracks = tracks.filter((tracksID) => tracksID !== id);
   }
 
   addAlbum(id: string) {
@@ -62,13 +68,12 @@ export class FavoritesService {
   }
 
   removeAlbum(id: string) {
-    let albums = this.db.favorites.albums;
+    const albums = this.db.favorites.albums;
     const found = albums.find((albumsID) => albumsID === id);
     if (!found) {
       throw new NotFoundException();
     }
-
-    albums = albums.filter((albumsID) => albumsID !== id);
+    this.db.favorites.albums = albums.filter((albumsID) => albumsID !== id);
   }
 
   addArtist(id: string) {
@@ -81,12 +86,12 @@ export class FavoritesService {
   }
 
   removeArtist(id: string) {
-    let artists = this.db.favorites.artists;
+    const artists = this.db.favorites.artists;
     const found = artists.find((artistID) => artistID === id);
     if (!found) {
       throw new NotFoundException();
     }
-    artists = artists.filter((artistID) => artistID !== id);
+    this.db.favorites.artists = artists.filter((artistID) => artistID !== id);
   }
 
   private getId(id: string, type: FavoritesType): string | undefined {
