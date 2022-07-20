@@ -10,7 +10,7 @@ import { DbModule } from 'src/db/db.module';
   imports: [
     forwardRef(() => TrackModule),
     forwardRef(() => ArtistModule),
-    forwardRef(() => AlbumModule),
+    AlbumModule,
     DbModule,
   ],
   exports: [FavoritesService],

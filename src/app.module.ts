@@ -11,10 +11,10 @@ import { DbModule } from './db/db.module';
 @Module({
   imports: [
     UserModule,
-    ArtistModule,
-    TrackModule,
-    AlbumModule,
     FavoritesModule,
+    AlbumModule,
+    TrackModule,
+    ArtistModule,
     DbModule,
   ],
   controllers: [AppController],
