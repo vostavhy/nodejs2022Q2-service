@@ -1,17 +1,14 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { Album } from './entities/album.entity';
 import { v4 as uuid } from 'uuid';
 import { DBService } from 'src/db/db.service';
+import { TrackService } from 'src/track/track.service';
 
 @Injectable()
 export class AlbumService {
-  constructor(private db: DBService) {}
+  constructor(private db: DBService, private trackService: TrackService) {}
 
   findAll() {
     return this.db.albums;
@@ -22,7 +19,6 @@ export class AlbumService {
     if (!found) {
       throw new NotFoundException();
     }
-
     return found;
   }
 
@@ -34,9 +30,7 @@ export class AlbumService {
       year,
       artistId,
     };
-
     this.db.albums.push(album);
-
     return album;
   }
 
@@ -52,6 +46,16 @@ export class AlbumService {
   remove(id: string): Album {
     const found = this.findOne(id);
     this.db.albums = this.db.albums.filter((album) => album.id !== id);
+    this.trackService.removeAlbum(id);
     return found;
+  }
+
+  removeArtist(artistId: string) {
+    const albums = this.db.albums.filter(
+      (album) => album.artistId === artistId,
+    );
+    albums.forEach((album) => {
+      album.artistId = null;
+    });
   }
 }

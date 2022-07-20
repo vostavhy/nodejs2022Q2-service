@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { Track } from './entities/track.entity';
@@ -49,5 +45,21 @@ export class TrackService {
     const found: Track = this.findOne(id);
     this.db.tracks = this.db.tracks.filter((track) => track.id !== id);
     return found;
+  }
+
+  removeArtist(artistId: string) {
+    const tracks = this.db.tracks.filter(
+      (track) => track.artistId === artistId,
+    );
+    tracks.forEach((track) => {
+      track.artistId = null;
+    });
+  }
+
+  removeAlbum(albumId: string) {
+    const tracks = this.db.tracks.filter((track) => track.albumId === albumId);
+    tracks.forEach((track) => {
+      track.albumId = null;
+    });
   }
 }
