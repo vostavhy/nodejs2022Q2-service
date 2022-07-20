@@ -15,7 +15,7 @@ export class AlbumService {
   }
 
   findOne(id: string): Album {
-    const found = this.db.albums.find((album) => album.id === id);
+    const found = this.getOne(id);
     if (!found) {
       throw new NotFoundException();
     }
@@ -57,5 +57,9 @@ export class AlbumService {
     albums.forEach((album) => {
       album.artistId = null;
     });
+  }
+
+  getOne(id: string): Album | undefined {
+    return this.db.albums.find((album) => album.id == id);
   }
 }

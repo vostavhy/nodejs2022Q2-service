@@ -20,7 +20,7 @@ export class ArtistService {
   }
 
   findOne(id: string): Artist {
-    const found = this.db.artists.find((artist) => artist.id === id);
+    const found = this.getOne(id);
     if (!found) {
       throw new NotFoundException();
     }
@@ -52,5 +52,9 @@ export class ArtistService {
     this.albumService.removeArtist(id);
     this.trackService.removeArtist(id);
     return found;
+  }
+
+  getOne(id: string): Artist | undefined {
+    return this.db.artists.find((artist) => artist.id === id);
   }
 }

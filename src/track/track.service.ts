@@ -14,7 +14,7 @@ export class TrackService {
   }
 
   findOne(id: string): Track {
-    const found = this.db.tracks.find((track) => track.id === id);
+    const found = this.getOne(id);
     if (!found) {
       throw new NotFoundException();
     }
@@ -61,5 +61,9 @@ export class TrackService {
     tracks.forEach((track) => {
       track.albumId = null;
     });
+  }
+
+  getOne(id: string): Track | undefined {
+    return this.db.tracks.find((track) => track.id === id);
   }
 }
