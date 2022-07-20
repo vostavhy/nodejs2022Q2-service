@@ -34,7 +34,6 @@ export class ArtistService {
       name,
       grammy,
     };
-
     this.db.artists.push(artist);
     return artist;
   }
