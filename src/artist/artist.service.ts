@@ -25,14 +25,6 @@ export class ArtistService {
     return found;
   }
 
-  findOne422(id: string): Artist {
-    const found = this.db.artists.find((artist) => artist.id === id);
-    if (!found) {
-      throw new UnprocessableEntityException();
-    }
-    return found;
-  }
-
   create(createArtistDto: CreateArtistDto): Artist {
     const { name, grammy } = createArtistDto;
     const artist: Artist = {

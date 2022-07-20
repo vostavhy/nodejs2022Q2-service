@@ -5,7 +5,6 @@ import { DBService } from 'src/db/db.service';
 import { Track } from 'src/track/entities/track.entity';
 import { TrackService } from 'src/track/track.service';
 import { FavoritesResponse } from './dto/favorites-response-dto';
-import { Favorite } from './entities/favorite.entity';
 
 @Injectable()
 export class FavoritesService {
@@ -26,7 +25,7 @@ export class FavoritesService {
   }
 
   addTrack(id: string): Track {
-    const found = this.trackService.findOne422(id);
+    const found = this.trackService.findOne(id);
     const { tracks } = this.db.favorites;
     tracks.push(found.id);
     return found;
@@ -43,7 +42,7 @@ export class FavoritesService {
   }
 
   addAlbum(id: string) {
-    const found = this.albumService.findOne422(id);
+    const found = this.albumService.findOne(id);
     const { albums } = this.db.favorites;
     albums.push(found.id);
   }
@@ -59,7 +58,7 @@ export class FavoritesService {
   }
 
   addArtist(id: string) {
-    const found = this.artistService.findOne422(id);
+    const found = this.artistService.findOne(id);
     const { artists } = this.db.favorites;
     artists.push(found.id);
   }

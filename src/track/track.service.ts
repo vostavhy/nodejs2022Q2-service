@@ -26,15 +26,6 @@ export class TrackService {
     return found;
   }
 
-  findOne422(id: string): Track {
-    const found = this.db.tracks.find((track) => track.id === id);
-    if (!found) {
-      throw new UnprocessableEntityException();
-    }
-
-    return found;
-  }
-
   create(createTrackDto: CreateTrackDto): Track {
     const track: Track = {
       id: uuid(),

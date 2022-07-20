@@ -26,15 +26,6 @@ export class AlbumService {
     return found;
   }
 
-  findOne422(id: string): Album {
-    const found = this.db.albums.find((album) => album.id === id);
-    if (!found) {
-      throw new UnprocessableEntityException();
-    }
-
-    return found;
-  }
-
   create(createAlbumDto: CreateAlbumDto): Album {
     const { name, year, artistId } = createAlbumDto;
     const album = {
