@@ -7,3 +7,9 @@ export interface FavoritesResponse {
   albums: Album[];
   tracks: Track[];
 }
+
+export enum FavoritesType {
+  tracks = 'tracks',
+  albums = 'albums',
+  artists = 'artists',
+}
