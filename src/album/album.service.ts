@@ -7,18 +7,18 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { Album } from './entities/album.entity';
 import { v4 as uuid } from 'uuid';
-import { dbService } from 'src/db/db.service';
+import { DBService } from 'src/db/db.service';
 
 @Injectable()
 export class AlbumService {
-  private albums: Album[] = dbService.albums;
+  constructor(private db: DBService) {}
 
   findAll() {
-    return this.albums;
+    return this.db.albums;
   }
 
   findOne(id: string): Album {
-    const found = this.albums.find((album) => album.id === id);
+    const found = this.db.albums.find((album) => album.id === id);
     if (!found) {
       throw new NotFoundException();
     }
@@ -27,7 +27,7 @@ export class AlbumService {
   }
 
   findOne422(id: string): Album {
-    const found = this.albums.find((album) => album.id === id);
+    const found = this.db.albums.find((album) => album.id === id);
     if (!found) {
       throw new UnprocessableEntityException();
     }
@@ -44,7 +44,7 @@ export class AlbumService {
       artistId,
     };
 
-    this.albums.push(album);
+    this.db.albums.push(album);
 
     return album;
   }
@@ -60,7 +60,7 @@ export class AlbumService {
 
   remove(id: string): Album {
     const found = this.findOne(id);
-    this.albums = this.albums.filter((album) => album.id !== id);
+    this.db.albums = this.db.albums.filter((album) => album.id !== id);
     return found;
   }
 }

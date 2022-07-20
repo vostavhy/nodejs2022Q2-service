@@ -7,18 +7,18 @@ import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { Track } from './entities/track.entity';
 import { v4 as uuid } from 'uuid';
-import { dbService } from 'src/db/db.service';
+import { DBService } from 'src/db/db.service';
 
 @Injectable()
 export class TrackService {
-  private tracks: Track[] = dbService.tracks;
+  constructor(private db: DBService) {}
 
   findAll(): Track[] {
-    return this.tracks;
+    return this.db.tracks;
   }
 
   findOne(id: string): Track {
-    const found = this.tracks.find((track) => track.id === id);
+    const found = this.db.tracks.find((track) => track.id === id);
     if (!found) {
       throw new NotFoundException();
     }
@@ -27,7 +27,7 @@ export class TrackService {
   }
 
   findOne422(id: string): Track {
-    const found = this.tracks.find((track) => track.id === id);
+    const found = this.db.tracks.find((track) => track.id === id);
     if (!found) {
       throw new UnprocessableEntityException();
     }
@@ -40,7 +40,7 @@ export class TrackService {
       id: uuid(),
       ...createTrackDto,
     };
-    this.tracks.push(track);
+    this.db.tracks.push(track);
 
     return track;
   }
@@ -56,7 +56,7 @@ export class TrackService {
 
   remove(id: string): Track {
     const found: Track = this.findOne(id);
-    this.tracks = this.tracks.filter((track) => track.id !== id);
+    this.db.tracks = this.db.tracks.filter((track) => track.id !== id);
     return found;
   }
 }

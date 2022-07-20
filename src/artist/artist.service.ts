@@ -7,18 +7,18 @@ import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './entities/artist.entity';
 import { v4 as uuid } from 'uuid';
-import { dbService } from 'src/db/db.service';
+import { DBService } from 'src/db/db.service';
 
 @Injectable()
 export class ArtistService {
-  artists: Artist[] = dbService.artists;
+  constructor(private db: DBService) {}
 
   findAll() {
-    return this.artists;
+    return this.db.artists;
   }
 
   findOne(id: string): Artist {
-    const found = this.artists.find((artist) => artist.id === id);
+    const found = this.db.artists.find((artist) => artist.id === id);
     if (!found) {
       throw new NotFoundException();
     }
@@ -26,7 +26,7 @@ export class ArtistService {
   }
 
   findOne422(id: string): Artist {
-    const found = this.artists.find((artist) => artist.id === id);
+    const found = this.db.artists.find((artist) => artist.id === id);
     if (!found) {
       throw new UnprocessableEntityException();
     }
@@ -41,7 +41,7 @@ export class ArtistService {
       grammy,
     };
 
-    this.artists.push(artist);
+    this.db.artists.push(artist);
     return artist;
   }
 
@@ -58,7 +58,7 @@ export class ArtistService {
 
   remove(id: string): Artist {
     const found = this.findOne(id);
-    this.artists = this.artists.filter((artist) => artist.id !== id);
+    this.db.artists = this.db.artists.filter((artist) => artist.id !== id);
     return found;
   }
 }

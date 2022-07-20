@@ -4,7 +4,6 @@ import { User } from 'src/user/entities/user.entity';
 import { Track } from 'src/track/entities/track.entity';
 import { Album } from 'src/album/entities/album.entity';
 import { Artist } from 'src/artist/entities/artist.entity';
-import { Favorite } from 'src/favorites/entities/favorite.entity';
 
 @Injectable()
 export class DBService {
@@ -12,13 +11,9 @@ export class DBService {
   public users: User[] = [];
   public albums: Album[] = [];
   public tracks: Track[] = [];
-  public favorites: Favorite = {
+  public favorites = {
     artists: [],
     albums: [],
     tracks: [],
   };
 }
-
-const dbService = new DBService();
-
-export { dbService };

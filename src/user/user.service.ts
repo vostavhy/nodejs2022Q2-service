@@ -7,20 +7,21 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-user.dto';
 import { User, UserWithoutPassword } from './entities/user.entity';
 import { v4 as uuid } from 'uuid';
+import { DBService } from 'src/db/db.service';
 
 @Injectable()
 export class UserService {
-  private users: User[] = [];
+  constructor(private db: DBService) {}
 
   findAll() {
-    const usersWP: UserWithoutPassword[] = this.users.map((user) =>
+    const usersWP: UserWithoutPassword[] = this.db.users.map((user) =>
       this.deletePassword(user),
     );
     return usersWP;
   }
 
   findOne(id: string): User {
-    const found = this.users.find((user) => user.id === id);
+    const found = this.db.users.find((user) => user.id === id);
 
     if (!found) {
       throw new NotFoundException();
@@ -47,7 +48,7 @@ export class UserService {
       updatedAt: currentDate,
     };
 
-    this.users.push(user);
+    this.db.users.push(user);
     return this.deletePassword(user);
   }
 
@@ -70,7 +71,7 @@ export class UserService {
 
   remove(id: string): UserWithoutPassword {
     const user = this.findOne(id);
-    this.users = this.users.filter((user) => user.id !== id);
+    this.db.users = this.db.users.filter((user) => user.id !== id);
     return this.deletePassword(user);
   }
 
