@@ -1,5 +1,5 @@
 export class Favorite {
-  artists: string[]; // favorite artists ids
-  albums: string[]; // favorite albums ids
-  tracks: string[]; // favorite tracks ids
+  artistsID: string[]; // favorite artists ids
+  albumsID: string[]; // favorite albums ids
+  tracksID: string[]; // favorite tracks ids
 }

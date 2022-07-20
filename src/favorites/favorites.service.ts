@@ -15,10 +15,13 @@ import { FavoritesResponse, FavoritesType } from './dto/favorites-response-dto';
 @Injectable()
 export class FavoritesService {
   constructor(
-    private db: DBService,
-    private readonly artistService: ArtistService,
-    private readonly albumService: AlbumService,
+    @Inject(forwardRef(() => TrackService))
     private readonly trackService: TrackService,
+    @Inject(forwardRef(() => ArtistService))
+    private readonly artistService: ArtistService,
+    @Inject(forwardRef(() => AlbumService))
+    private readonly albumService: AlbumService,
+    private db: DBService,
   ) {}
 
   findAll(): FavoritesResponse {

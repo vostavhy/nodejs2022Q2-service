@@ -1,13 +1,23 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { Track } from './entities/track.entity';
 import { v4 as uuid } from 'uuid';
 import { DBService } from 'src/db/db.service';
+import { FavoritesService } from 'src/favorites/favorites.service';
 
 @Injectable()
 export class TrackService {
-  constructor(private db: DBService) {}
+  constructor(
+    @Inject(forwardRef(() => FavoritesService))
+    private readonly favoritesService: FavoritesService,
+    private db: DBService,
+  ) {}
 
   findAll(): Track[] {
     return this.db.tracks;
@@ -44,6 +54,7 @@ export class TrackService {
   remove(id: string): Track {
     const found: Track = this.findOne(id);
     this.db.tracks = this.db.tracks.filter((track) => track.id !== id);
+    this.favoritesService.removeTrackSafe(id);
     return found;
   }
 
