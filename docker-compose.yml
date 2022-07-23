@@ -1,0 +1,36 @@
+version: '3.9'
+
+volumes:
+  postgres_data:
+
+services:
+  app:
+    container_name: nest-app
+    build: .
+    command: npm run start:dev
+    restart: always
+    depends_on:
+      - db
+    volumes:
+      - ./src:/app/src
+    env_file:
+      - .env
+    ports:
+      - ${PORT}:${PORT}
+
+  db:
+    container_name: nest-db
+    build:
+      context: ./db
+      dockerfile: Dockerfile
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB={DB_NAME}
+      - POSTGRES_USER={DB_USER}
+      - POSTGRES_PASSWORD={DB_PASSWORD}
+    ports:
+      - ${DB_PORT}:${DB_PORT}
