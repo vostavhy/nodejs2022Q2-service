@@ -1,8 +1,5 @@
 version: '3.9'
 
-volumes:
-  postgres_data:
-
 services:
   app:
     container_name: nest-app
@@ -17,6 +14,8 @@ services:
       - .env
     ports:
       - ${PORT}:${PORT}
+    networks:
+      - backend
 
   db:
     container_name: nest-db
@@ -34,3 +33,12 @@ services:
       - POSTGRES_PASSWORD={DB_PASSWORD}
     ports:
       - ${DB_PORT}:${DB_PORT}
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  postgres_data:
