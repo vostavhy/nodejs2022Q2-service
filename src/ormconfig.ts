@@ -1,5 +1,7 @@
 import * as dotenv from 'dotenv';
-import { DataSource } from 'typeorm';
+import { DataSourceOptions } from 'typeorm';
+
+dotenv.config();
 
 export default {
   type: 'postgres',
@@ -12,4 +14,4 @@ export default {
   entities: ['dist/**/entities/*.entity.js'],
   migrations: ['dist/**/migrations/*.js'],
   migrationsRun: true,
-};
+} as DataSourceOptions;
