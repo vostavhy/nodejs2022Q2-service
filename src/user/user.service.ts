@@ -40,53 +40,20 @@ export class UserService {
       throw new ForbiddenException();
     }
     updatedUser.password = newPassword;
-    return await this.userRepository.save(updatedUser);
+    return (await this.userRepository.save(updatedUser)).toResponse();
   }
 
   async remove(id: string) {
-    const found = this.findOne(id);
+    const user = await this.getUser(id);
     await this.userRepository.delete(id);
-    return found;
+    return user;
   }
 
   private async getUser(id: string) {
-    const found = await this.userRepository.findOne({ where: { id: id } });
+    const found = await this.userRepository.findOneBy({ id: id });
     if (!found) {
       throw new NotFoundException();
     }
     return found;
   }
-
-  //createOld(createUserDto: CreateUserDto): User {
-  //  const { login, password } = createUserDto;
-  //  const currentDate = Date.now();
-  //  const user: User = {
-  //    id: uuid(),
-  //    login,
-  //    password,
-  //    version: 1,
-  //    createdAt: currentDate,
-  //    updatedAt: currentDate,
-  //  };
-  //  this.db.users.push(user);
-  //  return user;
-  //}
-
-  //update(id: string, updatePasswordDto: UpdatePasswordDto): User {
-  //  const { oldPassword, newPassword } = updatePasswordDto;
-  //  const user = this.findOne(id);
-  //  if (oldPassword !== user.password) {
-  //    throw new ForbiddenException();
-  //  }
-  //  user.password = newPassword;
-  //  user.version += 1;
-  //  user.updatedAt = Date.now();
-  //  return user;
-  //}
-
-  //remove(id: string): User {
-  //  const user = this.findOne(id);
-  //  this.db.users = this.db.users.filter((user) => user.id !== id);
-  //  return user;
-  //}
 }
