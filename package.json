@@ -15,6 +15,7 @@
     "start:prod": "node dist/main",
     "start:docker": "docker-compose up -d",
     "stop:docker": "docker-compose stop",
+    "stop:hard": "docker-compose down --rmi local -v",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest --config ./test/jest-e2e.json",
     "test:auth": "cross-env TEST_MODE=auth jest --config ./test/jest-e2e.json",
