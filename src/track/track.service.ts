@@ -14,22 +14,33 @@ export class TrackService {
     private trackRepository: Repository<Track>,
   ) {}
 
-  async findAll(): Promise<Track[]> {
+  async findAll() {
     const tracks = await this.trackRepository.find();
-    return tracks;
+    return tracks.map((track) => track.toResponse());
   }
 
   async findOne(id: string) {
     const found = await this.getOne(id);
-    return found;
+    return found.toResponse();
   }
 
   async create(createTrackDto: CreateTrackDto) {
     const { artistId, albumId } = createTrackDto;
     const createdTrack = this.trackRepository.create(createTrackDto);
-    createdTrack.artist = await Artist.findOneBy({ id: artistId });
-    createdTrack.album = await Album.findOneBy({ id: albumId });
-    return await this.trackRepository.save(createdTrack);
+
+    let artist = null;
+    if (artistId) {
+      artist = await Artist.findOneBy({ id: artistId });
+    }
+    createdTrack.artist = artist;
+
+    let album = null;
+    if (albumId) {
+      album = await Album.findOneBy({ id: albumId });
+    }
+    createdTrack.album = album;
+
+    return (await this.trackRepository.save(createdTrack)).toResponse();
   }
 
   async update(id: string, updateTrackDto: UpdateTrackDto) {
@@ -37,9 +48,14 @@ export class TrackService {
     const updatedTrack: Track = await this.getOne(id);
     updatedTrack.name = name;
     updatedTrack.duration = duration;
-    updatedTrack.artist = await Artist.findOneBy({ id: artistId });
-    updatedTrack.album = await Album.findOneBy({ id: albumId });
-    return await this.trackRepository.save(updatedTrack);
+    if (artistId) {
+      updatedTrack.artist = await Artist.findOneBy({ id: artistId });
+    }
+    if (albumId) {
+      updatedTrack.album = await Album.findOneBy({ id: albumId });
+    }
+
+    return (await this.trackRepository.save(updatedTrack)).toResponse();
   }
 
   async remove(id: string): Promise<Track> {

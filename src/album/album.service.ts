@@ -9,9 +9,6 @@ import { Artist } from 'src/artist/entities/artist.entity';
 @Injectable()
 export class AlbumService {
   constructor(
-    //private trackService: TrackService,
-    //private readonly favoritesService: FavoritesService,
-    //private db: DBService,
     @InjectRepository(Album)
     private albumRepository: Repository<Album>,
   ) {}
@@ -31,7 +28,11 @@ export class AlbumService {
   async create(createAlbumDto: CreateAlbumDto): Promise<Album> {
     const { artistId } = createAlbumDto;
     const createdAlbum = this.albumRepository.create(createAlbumDto);
-    createdAlbum.artist = await Artist.findOneBy({ id: artistId });
+    if (artistId) {
+      createdAlbum.artist = await Artist.findOneBy({ id: artistId });
+    } else {
+      createdAlbum.artist = null;
+    }
     await this.albumRepository.save(createdAlbum);
     return createdAlbum;
   }
@@ -41,7 +42,7 @@ export class AlbumService {
     const album = await this.getOne(id);
     album.name = name;
     album.year = year;
-    album.artist = await Artist.findOneBy({ id: artistId });
+    if (artistId) album.artist = await Artist.findOneBy({ id: artistId });
     await this.albumRepository.save(album);
     return album;
   }

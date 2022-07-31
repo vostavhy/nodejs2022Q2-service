@@ -26,11 +26,21 @@ export class Track extends BaseEntity {
   album: Album | null; // refers to Album
 
   toResponse() {
-    const { id, name, duration } = this;
+    const { id, name, duration, artist, album } = this;
+    let artistId = null;
+    if (artist) {
+      artistId = artist.id;
+    }
+    let albumId = null;
+    if (albumId) {
+      albumId = album.id;
+    }
     return {
       id,
       name,
       duration,
+      artistId,
+      albumId,
     };
   }
 }

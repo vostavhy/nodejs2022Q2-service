@@ -23,6 +23,6 @@ export class Album extends BaseEntity {
   @ManyToOne(() => Artist, (artist) => artist.albums, { onDelete: 'SET NULL' })
   artist: Artist | null; // refers to Artist
 
-  @OneToMany(() => Track, (track) => track.album, { onDelete: 'SET NULL' })
-  tracks: Track[] | null; // refers to Tracks
+  @OneToMany(() => Track, (track) => track.album)
+  tracks: Track[]; // refers to Tracks
 }

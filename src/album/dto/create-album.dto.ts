@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsString } from '@nestjs/class-validator';
+import { IsInt, IsString, ValidateIf } from '@nestjs/class-validator';
 
 export class CreateAlbumDto {
   @IsString()
@@ -7,7 +7,7 @@ export class CreateAlbumDto {
   @IsInt()
   year: number;
 
+  @ValidateIf((o) => o.artistId !== null)
   @IsString()
-  @IsNotEmpty()
   artistId: string | null; // refers to Artist
 }
