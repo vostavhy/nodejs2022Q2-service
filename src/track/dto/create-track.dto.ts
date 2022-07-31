@@ -1,4 +1,17 @@
-import { OmitType } from '@nestjs/mapped-types';
-import { Track } from '../entities/track.entity';
+import { IsNotEmpty, IsNumber, IsString } from '@nestjs/class-validator';
 
-export class CreateTrackDto extends OmitType(Track, ['id']) {}
+export class CreateTrackDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  duration: number; // integer number
+
+  @IsString()
+  artistId: string | null;
+
+  @IsString()
+  albumId: string | null;
+}

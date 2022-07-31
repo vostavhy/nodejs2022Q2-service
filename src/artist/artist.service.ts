@@ -2,62 +2,51 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './entities/artist.entity';
-import { v4 as uuid } from 'uuid';
-import { DBService } from 'src/db/db.service';
-import { AlbumService } from 'src/album/album.service';
-import { TrackService } from 'src/track/track.service';
-import { FavoritesService } from 'src/favorites/favorites.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ArtistService {
   constructor(
-    private db: DBService,
-    private albumService: AlbumService,
-    private trackService: TrackService,
-    private readonly favoritesService: FavoritesService,
+    @InjectRepository(Artist)
+    private artistRepository: Repository<Artist>,
   ) {}
 
-  findAll() {
-    return this.db.artists;
+  async findAll() {
+    return await this.artistRepository.find();
   }
 
-  findOne(id: string): Artist {
-    const found = this.getOne(id);
+  async findOne(id: string): Promise<Artist> {
+    const found = await this.getOne(id);
+    return found;
+  }
+
+  async create(createArtistDto: CreateArtistDto): Promise<Artist> {
+    const createdArtist = this.artistRepository.create(createArtistDto);
+    await this.artistRepository.save(createdArtist);
+    return createdArtist;
+  }
+
+  async update(id: string, updateArtistDto: UpdateArtistDto): Promise<Artist> {
+    const found = await this.getOne(id);
+    const { name, grammy } = updateArtistDto;
+    found.name = name;
+    found.grammy = grammy;
+    await this.artistRepository.save(found);
+    return found;
+  }
+
+  async remove(id: string): Promise<Artist> {
+    const found = await this.getOne(id);
+    await this.artistRepository.delete(id);
+    return found;
+  }
+
+  async getOne(id: string): Promise<Artist> {
+    const found = await this.artistRepository.findOneBy({ id: id });
     if (!found) {
       throw new NotFoundException();
     }
     return found;
-  }
-
-  create(createArtistDto: CreateArtistDto): Artist {
-    const { name, grammy } = createArtistDto;
-    const artist: Artist = {
-      id: uuid(),
-      name,
-      grammy,
-    };
-    this.db.artists.push(artist);
-    return artist;
-  }
-
-  update(id: string, updateArtistDto: UpdateArtistDto): Artist {
-    const found = this.findOne(id);
-    const { name, grammy } = updateArtistDto;
-    found.name = name;
-    found.grammy = grammy;
-    return found;
-  }
-
-  remove(id: string): Artist {
-    const found = this.findOne(id);
-    this.db.artists = this.db.artists.filter((artist) => artist.id !== id);
-    this.albumService.removeArtist(id);
-    this.trackService.removeArtist(id);
-    this.favoritesService.removeArtistSafe(id);
-    return found;
-  }
-
-  getOne(id: string): Artist | undefined {
-    return this.db.artists.find((artist) => artist.id === id);
   }
 }
