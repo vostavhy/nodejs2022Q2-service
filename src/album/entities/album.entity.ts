@@ -25,4 +25,18 @@ export class Album extends BaseEntity {
 
   @OneToMany(() => Track, (track) => track.album)
   tracks: Track[]; // refers to Tracks
+
+  toResponse() {
+    const { id, name, year, artist } = this;
+    let artistId = null;
+    if (artist) {
+      artistId = artist.id;
+    }
+    return {
+      id,
+      name,
+      year,
+      artistId,
+    };
+  }
 }

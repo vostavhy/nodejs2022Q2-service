@@ -48,6 +48,7 @@ export class TrackService {
     const updatedTrack: Track = await this.getOne(id);
     updatedTrack.name = name;
     updatedTrack.duration = duration;
+
     if (artistId) {
       updatedTrack.artist = await Artist.findOneBy({ id: artistId });
     }

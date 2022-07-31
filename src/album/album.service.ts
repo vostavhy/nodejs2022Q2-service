@@ -14,53 +14,51 @@ export class AlbumService {
   ) {}
 
   async findAll() {
-    return await this.albumRepository.find();
+    const albums = await this.albumRepository.find();
+    return albums.map((album) => album.toResponse());
   }
 
-  async findOne(id: string): Promise<Album> {
+  async findOne(id: string) {
     const found = this.getOne(id);
     if (!found) {
       throw new NotFoundException();
     }
-    return found;
+    return (await found).toResponse();
   }
 
-  async create(createAlbumDto: CreateAlbumDto): Promise<Album> {
+  async create(createAlbumDto: CreateAlbumDto) {
     const { artistId } = createAlbumDto;
     const createdAlbum = this.albumRepository.create(createAlbumDto);
+
+    let artist = null;
     if (artistId) {
-      createdAlbum.artist = await Artist.findOneBy({ id: artistId });
-    } else {
-      createdAlbum.artist = null;
+      artist = await Artist.findOneBy({ id: artistId });
     }
+    createdAlbum.artist = artist;
+
     await this.albumRepository.save(createdAlbum);
-    return createdAlbum;
+    return createdAlbum.toResponse();
   }
 
-  async update(id: string, updateAlbumDto: UpdateAlbumDto): Promise<Album> {
+  async update(id: string, updateAlbumDto: UpdateAlbumDto) {
     const { name, year, artistId } = updateAlbumDto;
     const album = await this.getOne(id);
     album.name = name;
     album.year = year;
-    if (artistId) album.artist = await Artist.findOneBy({ id: artistId });
+
+    if (artistId) {
+      album.artist = await Artist.findOneBy({ id: artistId });
+    }
+
     await this.albumRepository.save(album);
-    return album;
+    return album.toResponse();
   }
 
-  async remove(id: string): Promise<Album> {
-    const found = this.getOne(id);
+  async remove(id: string) {
+    const found = await this.getOne(id);
     await this.albumRepository.delete(id);
-    return found;
+    return found.toResponse();
   }
-
-  //removeArtist(artistId: string) {
-  //  const albums = this.db.albums.filter(
-  //    (album) => album.artistId === artistId,
-  //  );
-  //  albums.forEach((album) => {
-  //    album.artistId = null;
-  //  });
-  //}
 
   private async getOne(id: string): Promise<Album> {
     const found = await this.albumRepository.findOneBy({ id: id });
