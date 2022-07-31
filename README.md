@@ -8,19 +8,37 @@
 ## Downloading
 
 ```
-git clone {repository URL}
+git clone https://github.com/vostavhy/nodejs2022Q2-service.git
 ```
 
-## Installing NPM modules
+## Running application locally
+
+Installing NPM modules
 
 ```
 npm install
 ```
 
-## Running application
+Running application
 
 ```
 npm start
+```
+
+## Running application in Docker container
+
+Install Docker Engine: https://docs.docker.com/engine/install/
+
+Running containers
+
+```
+npm run start:docker
+```
+
+Stop containers
+
+```
+npm run stop:docker
 ```
 
 After starting the app on port (4000 as default) you can open
@@ -63,6 +81,20 @@ npm run lint
 
 ```
 npm run format
+```
+
+### Scan Docker containers for vulnerabilities
+
+app
+
+```
+npm run scan:app
+```
+
+db
+
+```
+npm run scan:db
 ```
 
 ### Debugging in VSCode
