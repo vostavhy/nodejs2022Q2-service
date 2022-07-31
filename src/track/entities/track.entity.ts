@@ -25,14 +25,12 @@ export class Track extends BaseEntity {
   @ManyToOne(() => Album, (album) => album.tracks, { onDelete: 'SET NULL' })
   album: Album | null; // refers to Album
 
-  //toResponse() {
-  //  const { id, name, duration, artist, album } = this;
-  //  return {
-  //    id,
-  //    name,
-  //    duration,
-  //    artistId: artist.id,
-  //    albumId: album.id,
-  //  };
-  //}
+  toResponse() {
+    const { id, name, duration } = this;
+    return {
+      id,
+      name,
+      duration,
+    };
+  }
 }
