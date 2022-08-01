@@ -1,9 +1,11 @@
 import { Album } from 'src/album/entities/album.entity';
+import { Favorite } from 'src/favorites/entities/favorite.entity';
 import { Track } from 'src/track/entities/track.entity';
 import {
   BaseEntity,
   Column,
   Entity,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -24,4 +26,18 @@ export class Artist extends BaseEntity {
 
   @OneToMany(() => Album, (album) => album.artist)
   albums: Album[];
+
+  @ManyToOne(() => Favorite, (favorite) => favorite.artists, {
+    onDelete: 'CASCADE',
+  })
+  favorite: Favorite | null; // refers to Favorite
+
+  toResponse() {
+    const { id, name, grammy } = this;
+    return {
+      id,
+      name,
+      grammy,
+    };
+  }
 }
