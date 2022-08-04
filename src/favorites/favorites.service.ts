@@ -20,12 +20,16 @@ export class FavoritesService {
 
   async findAll() {
     await this.createFavoritesInstance();
+    // console.log(this.fvEntity);
     return this.fvEntity.toResponse();
   }
 
   async addTrack(id: string) {
     await this.createFavoritesInstance();
-    const found: Track = await Track.findOneBy({ id });
+    const found: Track = await Track.findOne({
+      where: { id },
+      relations: { artist: true, album: true },
+    });
     if (!found) {
       throw new UnprocessableEntityException();
     }
@@ -47,7 +51,12 @@ export class FavoritesService {
 
   async addAlbum(id: string) {
     await this.createFavoritesInstance();
-    const found = await Album.findOneBy({ id });
+    const found = await Album.findOne({
+      where: { id },
+      relations: {
+        artist: true,
+      },
+    });
     if (!found) {
       throw new UnprocessableEntityException();
     }
@@ -104,5 +113,6 @@ export class FavoritesService {
     } else {
       this.fvEntity = favorites[0];
     }
+    console.log(favorites[0] === this.fvEntity);
   }
 }

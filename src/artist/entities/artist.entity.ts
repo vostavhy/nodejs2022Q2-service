@@ -21,10 +21,10 @@ export class Artist extends BaseEntity {
   @Column()
   grammy: boolean;
 
-  @OneToMany(() => Track, (track) => track.artist)
+  @OneToMany(() => Track, (tracks) => tracks.artist)
   tracks: Track[];
 
-  @OneToMany(() => Album, (album) => album.artist)
+  @OneToMany(() => Album, (albums) => albums.artist)
   albums: Album[];
 
   @ManyToOne(() => Favorite, (favorite) => favorite.artists, {
