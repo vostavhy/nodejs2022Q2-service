@@ -1,6 +1,8 @@
 import {
+  ConflictException,
   ForbiddenException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -19,8 +21,19 @@ export class UserService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    const createdUser = this.userRepository.create(createUserDto);
-    return (await this.userRepository.save(createdUser)).toResponse();
+    let createdUser = this.userRepository.create(createUserDto);
+
+    try {
+      createdUser = await this.userRepository.save(createdUser);
+    } catch (error) {
+      if (error.code === '23505') {
+        throw new ConflictException('Username already exist');
+      } else {
+        throw new InternalServerErrorException();
+      }
+    }
+
+    return createdUser.toResponse();
   }
 
   async findAll() {
