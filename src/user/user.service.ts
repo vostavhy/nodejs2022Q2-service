@@ -57,10 +57,15 @@ export class UserService {
   async update(id: string, updatePasswordDto: UpdatePasswordDto) {
     const { oldPassword, newPassword } = updatePasswordDto;
     const updatedUser = await this.getUser(id);
-    if (oldPassword !== updatedUser.password) {
+    if (!(await bcrypt.compare(oldPassword, updatedUser.password))) {
       throw new ForbiddenException();
     }
-    updatedUser.password = newPassword;
+
+    // hash
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+    updatedUser.password = hashedPassword;
+
     return (await this.userRepository.save(updatedUser)).toResponse();
   }
 
