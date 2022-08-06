@@ -8,10 +8,7 @@ import {
   ParseUUIDPipe,
   Put,
   HttpCode,
-  UseGuards,
 } from '@nestjs/common';
-// import { AuthGuard } from '@nestjs/passport';
-// import { JwtAuthGuard } from 'src/auth/jwt-auth.gaurd';
 import { ArtistService } from './artist.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
