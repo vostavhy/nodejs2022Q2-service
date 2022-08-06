@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { User } from 'src/user/entities/user.entity';
@@ -27,11 +27,11 @@ export class AuthService {
     const { login, password } = createUserDto;
     const user = await this.userRepository.findOneBy({ login });
     if (user && (await bcrypt.compare(password, user.password))) {
-      const payload: JwtPayload = { login };
+      const payload: JwtPayload = { login, userId: user.id };
       const accessToken: string = await this.jwtService.sign(payload);
       return { accessToken };
     } else {
-      throw new UnauthorizedException('Please check your login credentials');
+      throw new ForbiddenException('Please check your login credentials');
     }
   }
 }
