@@ -4,28 +4,33 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
+import { AuthService } from './auth.service';
 import { JwtPayload } from './jwt-payload.interface';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+export class JwtRefreshStrategy extends PassportStrategy(
+  Strategy,
+  'jwt-refresh-token',
+) {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private authService: AuthService,
   ) {
     super({
-      secretOrKey: process.env.JWT_SECRET_KEY || 'topSecret',
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ignoreExpiration: false,
+      jwtFromRequest: ExtractJwt.fromBodyField('refresh_token'),
+      secretOrKey: process.env.JWT_SECRET_REFRESH_KEY || 'topSecret',
     });
   }
 
-  async validate(payload: JwtPayload): Promise<User> {
+  async validate(payload: JwtPayload) {
     const { login } = payload;
-    const user: User = await this.userRepository.findOneBy({ login });
+    const user = await this.userRepository.findOneBy({ login });
+
     if (!user) {
-      throw new UnauthorizedException(`${user} does not exist`);
+      throw new UnauthorizedException();
     }
     return user;
   }
