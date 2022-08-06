@@ -113,6 +113,5 @@ export class FavoritesService {
     } else {
       this.fvEntity = favorites[0];
     }
-    console.log(favorites[0] === this.fvEntity);
   }
 }
