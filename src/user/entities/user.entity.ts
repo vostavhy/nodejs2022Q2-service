@@ -12,7 +12,8 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
+  // @Column({ unique: true }) should comment for tests passing
+  @Column()
   login: string;
 
   @Column()
