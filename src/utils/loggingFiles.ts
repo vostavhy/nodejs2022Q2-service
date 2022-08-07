@@ -48,6 +48,6 @@ const getCurrentLogFilePath = async () => {
 
 export const writeLog = async (log: string) => {
   const filePath = await getCurrentLogFilePath();
-  const date = new Date();
+  const date = new Date().toISOString();
   await writeLine(filePath, `${date} ${log} \n`);
 };

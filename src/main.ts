@@ -3,6 +3,7 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import 'dotenv/config';
 import { getLogLevels, MyLogger } from './utils/loggingService';
+import { HttpExceptionFilter } from './utils/exception.filter';
 
 async function bootstrap() {
   const port = process.env.PORT || 4000;
@@ -13,6 +14,7 @@ async function bootstrap() {
     bufferLogs: true,
   });
 
+  app.useGlobalFilters(new HttpExceptionFilter());
   app.useLogger(app.get(MyLogger));
 
   app.useGlobalPipes(new ValidationPipe());
