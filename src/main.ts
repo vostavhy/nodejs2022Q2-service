@@ -2,7 +2,7 @@ import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import 'dotenv/config';
-import { getLogLevels } from './utils/loggingService';
+import { getLogLevels, MyLogger } from './utils/loggingService';
 
 async function bootstrap() {
   const port = process.env.PORT || 4000;
@@ -10,7 +10,10 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule, {
     logger: getLogLevels('production' === logLevel),
+    bufferLogs: true,
   });
+
+  app.useLogger(app.get(MyLogger));
 
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));

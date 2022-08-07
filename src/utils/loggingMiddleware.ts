@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
-  private logger = new Logger('CUSTOM LOGGER');
+  private logger = new Logger();
 
   use(request: Request, response: Response, next: NextFunction): void {
     const { ip, method, baseUrl, query, body } = request;
@@ -27,7 +27,7 @@ export class LoggerMiddleware implements NestMiddleware {
       params.push(userAgent);
       params.push(ip);
 
-      if (statusMessage !== 'OK') {
+      if (statusCode > 300) {
         this.logger.error(params.join(' '));
       } else {
         this.logger.log(params.join(' '));

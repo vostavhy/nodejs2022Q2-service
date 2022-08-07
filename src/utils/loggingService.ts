@@ -2,18 +2,16 @@ import { ConsoleLogger, LogLevel } from '@nestjs/common';
 
 export class MyLogger extends ConsoleLogger {
   error(message: any, stack?: string, context?: string) {
-    const args = [message, stack, context] as const;
-    super.error(...args);
+    // const args = [message, stack, context] as const;
+    super.error(message);
   }
 
   warn(message: any, stack?: string, context?: string) {
-    const args = [message, stack, context] as const;
-    super.warn(...args);
+    super.warn(message);
   }
 
   log(message: any, stack?: string, context?: string) {
-    const args = [message, stack, context] as const;
-    super.log(...args);
+    super.log(message);
   }
 }
 

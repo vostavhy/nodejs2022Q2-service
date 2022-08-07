@@ -14,6 +14,7 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/jwt-auth.gaurd';
 import { LoggerMiddleware } from './utils/loggingMiddleware';
+import { LoggerModule } from './logger/logger.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { LoggerMiddleware } from './utils/loggingMiddleware';
     ConfigModule.forRoot({ isGlobal: true, envFilePath: '../.env' }),
     TypeOrmModule.forRoot(configService),
     AuthModule,
+    LoggerModule,
   ],
   controllers: [AppController],
   providers: [
