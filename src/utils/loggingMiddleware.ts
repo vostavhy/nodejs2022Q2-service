@@ -13,11 +13,21 @@ export class LoggerMiddleware implements NestMiddleware {
       const { statusCode, statusMessage } = response;
       const contentLength = response.get('content-length');
 
-      this.logger.log(
-        `${method} ${statusCode} ${statusMessage} ${baseUrl} query:${JSON.stringify(
-          query,
-        )} body:${JSON.stringify(body)} ${contentLength} - ${userAgent} ${ip}`,
-      );
+      const params = [method, statusCode, statusMessage, baseUrl];
+
+      if (Object.keys(query).length !== 0) {
+        params.push(`query:${JSON.stringify(query)}`);
+      }
+
+      if (Object.keys(body).length !== 0) {
+        params.push(`body:${JSON.stringify(body)}`);
+      }
+
+      params.push(contentLength);
+      params.push(userAgent);
+      params.push(ip);
+
+      this.logger.log(params.join(' '));
     });
 
     next();
