@@ -5,7 +5,9 @@ import 'dotenv/config';
 
 async function bootstrap() {
   const port = process.env.PORT || 4000;
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: ['error', 'warn', 'log'],
+  });
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   await app.listen(port);

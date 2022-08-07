@@ -27,7 +27,11 @@ export class LoggerMiddleware implements NestMiddleware {
       params.push(userAgent);
       params.push(ip);
 
-      this.logger.log(params.join(' '));
+      if (statusMessage !== 'OK') {
+        this.logger.error(params.join(' '));
+      } else {
+        this.logger.log(params.join(' '));
+      }
     });
 
     next();
