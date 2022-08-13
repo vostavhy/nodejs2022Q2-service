@@ -12,6 +12,7 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
 
 @Controller('user')
 export class UserController {
@@ -24,12 +25,12 @@ export class UserController {
 
   @Get(':id')
   getOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.userService.getOne(id);
+    return new User(this.userService.findOne(id));
   }
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+    return new User(this.userService.create(createUserDto));
   }
 
   @Put(':id')
@@ -37,12 +38,12 @@ export class UserController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
   ) {
-    return this.userService.update(id, updatePasswordDto);
+    return new User(this.userService.update(id, updatePasswordDto));
   }
 
   @Delete(':id')
   @HttpCode(204)
   remove(@Param('id', ParseUUIDPipe) id: string) {
-    return this.userService.remove(id);
+    return new User(this.userService.remove(id));
   }
 }

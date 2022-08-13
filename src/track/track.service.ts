@@ -1,35 +1,26 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { Track } from './entities/track.entity';
 import { v4 as uuid } from 'uuid';
-import { dbService } from 'src/db/db.service';
+import { DBService } from 'src/db/db.service';
+import { FavoritesService } from 'src/favorites/favorites.service';
 
 @Injectable()
 export class TrackService {
-  private tracks: Track[] = dbService.tracks;
+  constructor(
+    private readonly favoritesService: FavoritesService,
+    private db: DBService,
+  ) {}
 
   findAll(): Track[] {
-    return this.tracks;
+    return this.db.tracks;
   }
 
   findOne(id: string): Track {
-    const found = this.tracks.find((track) => track.id === id);
+    const found = this.getOne(id);
     if (!found) {
       throw new NotFoundException();
-    }
-
-    return found;
-  }
-
-  findOne422(id: string): Track {
-    const found = this.tracks.find((track) => track.id === id);
-    if (!found) {
-      throw new UnprocessableEntityException();
     }
 
     return found;
@@ -40,7 +31,7 @@ export class TrackService {
       id: uuid(),
       ...createTrackDto,
     };
-    this.tracks.push(track);
+    this.db.tracks.push(track);
 
     return track;
   }
@@ -56,7 +47,28 @@ export class TrackService {
 
   remove(id: string): Track {
     const found: Track = this.findOne(id);
-    this.tracks = this.tracks.filter((track) => track.id !== id);
+    this.db.tracks = this.db.tracks.filter((track) => track.id !== id);
+    this.favoritesService.removeTrackSafe(id);
     return found;
+  }
+
+  removeArtist(artistId: string) {
+    const tracks = this.db.tracks.filter(
+      (track) => track.artistId === artistId,
+    );
+    tracks.forEach((track) => {
+      track.artistId = null;
+    });
+  }
+
+  removeAlbum(albumId: string) {
+    const tracks = this.db.tracks.filter((track) => track.albumId === albumId);
+    tracks.forEach((track) => {
+      track.albumId = null;
+    });
+  }
+
+  getOne(id: string): Track | undefined {
+    return this.db.tracks.find((track) => track.id === id);
   }
 }

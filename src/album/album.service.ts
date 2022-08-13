@@ -1,37 +1,29 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { Album } from './entities/album.entity';
 import { v4 as uuid } from 'uuid';
-import { dbService } from 'src/db/db.service';
+import { DBService } from 'src/db/db.service';
+import { TrackService } from 'src/track/track.service';
+import { FavoritesService } from 'src/favorites/favorites.service';
 
 @Injectable()
 export class AlbumService {
-  private albums: Album[] = dbService.albums;
+  constructor(
+    private trackService: TrackService,
+    private readonly favoritesService: FavoritesService,
+    private db: DBService,
+  ) {}
 
   findAll() {
-    return this.albums;
+    return this.db.albums;
   }
 
   findOne(id: string): Album {
-    const found = this.albums.find((album) => album.id === id);
+    const found = this.getOne(id);
     if (!found) {
       throw new NotFoundException();
     }
-
-    return found;
-  }
-
-  findOne422(id: string): Album {
-    const found = this.albums.find((album) => album.id === id);
-    if (!found) {
-      throw new UnprocessableEntityException();
-    }
-
     return found;
   }
 
@@ -43,9 +35,7 @@ export class AlbumService {
       year,
       artistId,
     };
-
-    this.albums.push(album);
-
+    this.db.albums.push(album);
     return album;
   }
 
@@ -60,7 +50,22 @@ export class AlbumService {
 
   remove(id: string): Album {
     const found = this.findOne(id);
-    this.albums = this.albums.filter((album) => album.id !== id);
+    this.db.albums = this.db.albums.filter((album) => album.id !== id);
+    this.trackService.removeAlbum(id);
+    this.favoritesService.removeAlbumSafe(id);
     return found;
+  }
+
+  removeArtist(artistId: string) {
+    const albums = this.db.albums.filter(
+      (album) => album.artistId === artistId,
+    );
+    albums.forEach((album) => {
+      album.artistId = null;
+    });
+  }
+
+  getOne(id: string): Album | undefined {
+    return this.db.albums.find((album) => album.id == id);
   }
 }
