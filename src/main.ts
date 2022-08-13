@@ -20,6 +20,7 @@ async function bootstrap() {
     .setDescription('Music service API description')
     .setVersion('1.0')
     .addTag('music')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
