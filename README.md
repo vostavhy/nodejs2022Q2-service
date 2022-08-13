@@ -13,6 +13,18 @@ git clone https://github.com/vostavhy/nodejs2022Q2-service.git
 
 ## Running application locally
 
+Install PostgreSQL: https://www.postgresql.org/download/
+
+Create and configure DB. For instance, you can use the following data:
+
+```
+POSTGRES_USER=nest_api_user
+POSTGRES_PASSWORD=nest_api_pass
+POSTGRES_DB=nest_api_db
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
+```
+
 Installing NPM modules
 
 ```
