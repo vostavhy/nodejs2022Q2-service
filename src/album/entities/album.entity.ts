@@ -5,6 +5,7 @@ import {
   BaseEntity,
   Column,
   Entity,
+  JoinTable,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -21,15 +22,19 @@ export class Album extends BaseEntity {
   @Column()
   year: number;
 
-  @ManyToOne(() => Artist, (artist) => artist.albums, { onDelete: 'SET NULL' })
-  artist: Artist | null; // refers to Artist
+  @ManyToOne(() => Artist, (artist) => artist.albums, {
+    onDelete: 'SET NULL',
+    eager: true,
+  })
+  @JoinTable()
+  artist: Artist;
 
   @ManyToOne(() => Favorite, (favorite) => favorite.albums, {
     onDelete: 'CASCADE',
   })
   favorite: Favorite | null; // refers to Favorite
 
-  @OneToMany(() => Track, (track) => track.album)
+  @OneToMany(() => Track, (tracks) => tracks.album)
   tracks: Track[]; // refers to Tracks
 
   toResponse() {

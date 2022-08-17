@@ -14,16 +14,22 @@ export class AlbumService {
   ) {}
 
   async findAll() {
-    const albums = await this.albumRepository.find();
+    const albums = await this.albumRepository.find({
+      relations: {
+        artist: true,
+      },
+    });
     return albums.map((album) => album.toResponse());
   }
 
   async findOne(id: string) {
-    const found = this.getOne(id);
+    const found = await this.getOne(id);
     if (!found) {
       throw new NotFoundException();
     }
-    return (await found).toResponse();
+    //console.log(found);
+    //console.log(found.artist);
+    return found.toResponse();
   }
 
   async create(createAlbumDto: CreateAlbumDto) {
@@ -37,6 +43,8 @@ export class AlbumService {
     createdAlbum.artist = artist;
 
     await this.albumRepository.save(createdAlbum);
+    //console.log(createdAlbum.toResponse());
+    //console.log(createdAlbum);
     return createdAlbum.toResponse();
   }
 
@@ -61,7 +69,12 @@ export class AlbumService {
   }
 
   private async getOne(id: string): Promise<Album> {
-    const found = await this.albumRepository.findOneBy({ id: id });
+    const found = await this.albumRepository.findOne({
+      where: { id: id },
+      relations: {
+        artist: true,
+      },
+    });
     if (!found) {
       throw new NotFoundException();
     }

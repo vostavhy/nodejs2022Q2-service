@@ -1,26 +1,47 @@
 import {
+  ConflictException,
   ForbiddenException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-//import { DBService } from 'src/db/db.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
   constructor(
-    //private db: DBService,
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    const createdUser = this.userRepository.create(createUserDto);
-    return (await this.userRepository.save(createdUser)).toResponse();
+    const { login, password } = createUserDto;
+
+    // hash
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    let createdUser = this.userRepository.create({
+      login,
+      password: hashedPassword,
+    });
+
+    try {
+      createdUser = await this.userRepository.save(createdUser);
+    } catch (error) {
+      if (error.code === '23505') {
+        throw new ConflictException('Username already exist');
+      } else {
+        throw new InternalServerErrorException();
+      }
+    }
+
+    return createdUser.toResponse();
   }
 
   async findAll() {
@@ -36,10 +57,15 @@ export class UserService {
   async update(id: string, updatePasswordDto: UpdatePasswordDto) {
     const { oldPassword, newPassword } = updatePasswordDto;
     const updatedUser = await this.getUser(id);
-    if (oldPassword !== updatedUser.password) {
+    if (!(await bcrypt.compare(oldPassword, updatedUser.password))) {
       throw new ForbiddenException();
     }
-    updatedUser.password = newPassword;
+
+    // hash
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+    updatedUser.password = hashedPassword;
+
     return (await this.userRepository.save(updatedUser)).toResponse();
   }
 

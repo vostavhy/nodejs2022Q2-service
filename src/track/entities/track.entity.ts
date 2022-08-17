@@ -5,6 +5,7 @@ import {
   BaseEntity,
   Column,
   Entity,
+  JoinTable,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -20,10 +21,18 @@ export class Track extends BaseEntity {
   @Column()
   duration: number; // integer number
 
-  @ManyToOne(() => Artist, (artist) => artist.tracks, { onDelete: 'SET NULL' })
+  @ManyToOne(() => Artist, (artist) => artist.tracks, {
+    onDelete: 'SET NULL',
+    eager: true,
+  })
+  @JoinTable()
   artist: Artist | null; // refers to Artist
 
-  @ManyToOne(() => Album, (album) => album.tracks, { onDelete: 'SET NULL' })
+  @ManyToOne(() => Album, (album) => album.tracks, {
+    onDelete: 'SET NULL',
+    eager: true,
+  })
+  @JoinTable()
   album: Album | null; // refers to Album
 
   @ManyToOne(() => Favorite, (favorite) => favorite.tracks, {
@@ -38,7 +47,7 @@ export class Track extends BaseEntity {
       artistId = artist.id;
     }
     let albumId = null;
-    if (albumId) {
+    if (album) {
       albumId = album.id;
     }
     return {

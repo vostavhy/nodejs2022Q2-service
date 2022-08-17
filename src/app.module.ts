@@ -10,6 +10,9 @@ import { DbModule } from './db/db.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import configService from './ormconfig';
 import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './auth/jwt-auth.gaurd';
 
 @Module({
   imports: [
@@ -21,8 +24,15 @@ import { ConfigModule } from '@nestjs/config';
     DbModule,
     ConfigModule.forRoot({ isGlobal: true, envFilePath: '../.env' }),
     TypeOrmModule.forRoot(configService),
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule {}

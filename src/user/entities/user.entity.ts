@@ -1,3 +1,5 @@
+import { Exclude } from 'class-transformer';
+import * as bcrypt from 'bcrypt';
 import {
   Column,
   CreateDateColumn,
@@ -12,6 +14,7 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  // @Column({ unique: true }) should comment for tests passing
   @Column()
   login: string;
 
@@ -27,6 +30,10 @@ export class User {
   @UpdateDateColumn()
   updatedAt: number; // timestamp of last update
 
+  @Column({ nullable: true })
+  @Exclude()
+  public hashedRefreshToken?: string;
+
   toResponse() {
     const { id, login, version, createdAt, updatedAt } = this;
 
@@ -37,5 +44,12 @@ export class User {
       createdAt: new Date(createdAt).getTime(),
       updatedAt: new Date(updatedAt).getTime(),
     };
+  }
+
+  async validatePassword(
+    password: string,
+    hashedPassword: string,
+  ): Promise<boolean> {
+    return await bcrypt.compare(password, hashedPassword);
   }
 }
