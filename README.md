@@ -13,6 +13,18 @@ git clone https://github.com/vostavhy/nodejs2022Q2-service.git
 
 ## Running application locally
 
+Install PostgreSQL: https://www.postgresql.org/download/
+
+Create and configure DB. For instance, you can use the following data:
+
+```
+POSTGRES_USER=nest_api_user
+POSTGRES_PASSWORD=nest_api_pass
+POSTGRES_DB=nest_api_db
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
+```
+
 Installing NPM modules
 
 ```
@@ -41,25 +53,19 @@ Stop containers
 npm run stop:docker
 ```
 
+## Swagger
+
 After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
+## Authorization
+
+Bearer token is required for all operations except sign up, login, refresh
+
 ## Testing
 
 After application running open new terminal and enter:
-
-To run all tests without authorization
-
-```
-npm run test
-```
-
-To run only one of all test suites
-
-```
-npm run test -- <path to suite>
-```
 
 To run all test with authorization
 
@@ -96,9 +102,3 @@ db
 ```
 npm run scan:db
 ```
-
-### Debugging in VSCode
-
-Press <kbd>F5</kbd> to debug.
-
-For more information, visit: https://code.visualstudio.com/docs/editor/debugging

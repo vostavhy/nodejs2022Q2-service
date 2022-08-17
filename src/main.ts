@@ -4,6 +4,7 @@ import { AppModule } from './app.module';
 import 'dotenv/config';
 import { getLogLevels, MyLogger } from './utils/loggingService';
 import { HttpExceptionFilter } from './utils/exception.filter';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const port = process.env.PORT || 4000;
@@ -13,6 +14,17 @@ async function bootstrap() {
     logger: getLogLevels('production' === logLevel),
     bufferLogs: true,
   });
+
+  const config = new DocumentBuilder()
+    .setTitle('Music service title')
+    .setDescription('Music service API description')
+    .setVersion('1.0')
+    .addTag('music')
+    .addBearerAuth()
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('doc', app, document);
 
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useLogger(app.get(MyLogger));
